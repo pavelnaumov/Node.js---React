@@ -5,6 +5,10 @@ const keys = require("../config/keys");
 
 const User = mongoose.model("users");
 
+/**
+ * Service responsible for Authentication with Passport
+ */
+
 passport.serializeUser((user, done) => {
   done(null, user.id); // NOTE: not the profile.id; mongoId
 });
@@ -16,16 +20,13 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-/**
- * Service responsible for Authentication with Passport
- */
-
 passport.use(
   new GoogleStrategy(
     {
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
-      callbackURL: "/auth/google/callback" // callback route to call ⬇️
+      callbackURL: "/auth/google/callback", // callback route to call ⬇️
+      proxy: true // telling Google to Trust Proxied request
     },
     (accessToken, refreshToken, profile, done) => {
       // a Mongoose query
@@ -46,5 +47,3 @@ passport.use(
     }
   )
 );
-
-//44
