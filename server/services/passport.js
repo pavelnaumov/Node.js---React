@@ -1,6 +1,9 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const mongoose = require("mongoose");
 const keys = require("../config/keys");
+
+const User = mongoose.model("users");
 
 /**
  * Service responsible for Authentication with Passport
@@ -14,7 +17,24 @@ passport.use(
       callbackURL: "/auth/google/callback" // callback route to call ⬇️
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log({ accessToken, refreshToken, profile, done }); // executed upon success; opportunity to create a user in the db
+      User.findOne({
+        // a Mongoose query
+        googleId: profile.id
+      }).then(existingUser => {
+        if (existingUser) {
+          // we already have the user in the db
+          done(null, existingUser);
+        } else {
+          new User({
+            googleId: profile.id
+          })
+            .save()
+            .then(user => done(null, user));
+        }
+      });
     }
   )
 );
+
+
+//44
