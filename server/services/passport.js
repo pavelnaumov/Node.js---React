@@ -5,6 +5,17 @@ const keys = require("../config/keys");
 
 const User = mongoose.model("users");
 
+passport.serializeUser((user, done) => {
+  done(null, user.id); // NOTE: not the profile.id; mongoId
+});
+
+passport.deserializeUser((id, done) => {
+  // a Mongoose query
+  User.findById(id).then(user => {
+    done(null, user);
+  });
+});
+
 /**
  * Service responsible for Authentication with Passport
  */
@@ -17,8 +28,8 @@ passport.use(
       callbackURL: "/auth/google/callback" // callback route to call ⬇️
     },
     (accessToken, refreshToken, profile, done) => {
+      // a Mongoose query
       User.findOne({
-        // a Mongoose query
         googleId: profile.id
       }).then(existingUser => {
         if (existingUser) {
@@ -35,6 +46,5 @@ passport.use(
     }
   )
 );
-
 
 //44
