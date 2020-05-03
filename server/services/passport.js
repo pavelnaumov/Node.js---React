@@ -28,22 +28,19 @@ passport.use(
       callbackURL: "/auth/google/callback", // callback route to call ⬇️
       proxy: true // telling Google to Trust Proxied request
     },
-    (accessToken, refreshToken, profile, done) => {
-      // a Mongoose query
-      User.findOne({
+    async (_accessToken, _refreshToken, profile, done) => {
+      const existingUser = await User.findOne({
         googleId: profile.id
-      }).then(existingUser => {
-        if (existingUser) {
-          // we already have the user in the db
-          done(null, existingUser);
-        } else {
-          new User({
-            googleId: profile.id
-          })
-            .save()
-            .then(user => done(null, user));
-        }
       });
+
+      if (existingUser) {
+        return done(null, existingUser);
+      }
+
+      const user = await new User({
+        googleId: profile.id
+      }).save();
+      done(null, user);
     }
   )
 );

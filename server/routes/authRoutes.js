@@ -13,11 +13,17 @@ module.exports = app => {
     })
   );
 
-  app.get("/auth/google/callback", passport.authenticate("google")); // the callback route ⬆️
+  app.get(
+    "/auth/google/callback",
+    passport.authenticate("google"),
+    (req, res) => {
+      res.redirect("/surveys"); // existing route from React App 👀
+    }
+  ); // the callback route ⬆️
 
   app.get("/api/logout", (req, res) => {
     req.logout(); // passport attaches this function to the request
-    res.send(req.user);
+    res.redirect('/');
   });
 
   app.get("/api/current_user", (req, res) => {
