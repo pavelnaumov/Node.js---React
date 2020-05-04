@@ -10,6 +10,7 @@ const User = mongoose.model("users");
  */
 
 passport.serializeUser((user, done) => {
+  // I assume the attachment of user to req happens here
   done(null, user.id); // NOTE: not the profile.id; mongoId
 });
 

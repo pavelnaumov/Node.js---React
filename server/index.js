@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cookieSession = require("cookie-session");
 const passport = require("passport");
 const keys = require("./config/keys");
+const bodyParser = require("body-parser");
 require("./models/User"); // loads in and executes automatically
 require("./services/passport"); // loads in and exectutes automatically
 
@@ -10,6 +11,7 @@ mongoose.connect(keys.mongoURI, { useNewUrlParser: true });
 
 const app = express();
 
+app.use(bodyParser.json());
 app.use(
   cookieSession({
     maxAge: 30 * 24 * 60 * 60 * 1000, // how long it exists,
@@ -19,7 +21,8 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-require("./routes/authRoutes")(app);
+require("./routes/authRoutes")(app); // auth routes
+require("./routes/billingRoutes")(app); // billing routes
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT);

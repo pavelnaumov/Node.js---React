@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
+import Payments from "./Payments";
 
 class Header extends Component {
   renderContent = () => {
@@ -16,9 +17,21 @@ class Header extends Component {
         );
       default:
         return (
-          <li>
-            <a href="/api/logout">Logout</a>
-          </li>
+          <>
+            <li>
+              <Payments />
+            </li>
+            <li
+              style={{
+                paddingLeft: 10
+              }}
+            >
+              <code> Credits: {this.props.auth.credits}</code>
+            </li>
+            <li>
+              <a href="/api/logout">Logout</a>
+            </li>
+          </>
         );
     }
   };
